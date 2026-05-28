@@ -1,11 +1,20 @@
 import React from "react";
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = ({ onMenuClick }) => {
   const { role, setRole, theme, setTheme } = useAppContext();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const isLight = theme === "light";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header
@@ -85,6 +94,40 @@ const Header = ({ onMenuClick }) => {
                 <option value="admin">Admin</option>
               </select>
             </div>
+
+            {/* User Profile & Logout */}
+            {user && (
+              <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-300 dark:border-slate-700">
+                <div className="text-right">
+                  <p
+                    className={`text-sm font-medium ${
+                      isLight ? "text-gray-800" : "text-white"
+                    }`}
+                  >
+                    {user.name}
+                  </p>
+                  <p
+                    className={`text-xs ${
+                      isLight ? "text-gray-500" : "text-slate-400"
+                    }`}
+                  >
+                    {user.email}
+                  </p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg transition ${
+                    isLight
+                      ? "bg-red-100 text-red-600 hover:bg-red-200"
+                      : "bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                  }`}
+                  aria-label="Logout"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
